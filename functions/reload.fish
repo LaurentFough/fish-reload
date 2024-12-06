@@ -1,7 +1,7 @@
-function reload
+function frc.reload
     #= Help
     function __help -d "show help"
-        printf "usage: reload [-h] [-c command] [-e 'env1=value1'] [-e 'env2=value2']\n\n"
+        printf "usage: frc.reload [-h] [-c command] [-e 'env1=value1'] [-e 'env2=value2']\n\n"
 
         printf "positional arguments:\n"
         printf "\n"
