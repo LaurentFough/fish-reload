@@ -1,5 +1,5 @@
 function reload
-    # Help
+    #= Help
     function __help -d "show help"
         printf "usage: reload [-h] [-c command] [-e 'env1=value1'] [-e 'env2=value2']\n\n"
 
@@ -15,14 +15,14 @@ function reload
         return 0
     end
 
-    # Parse arguments
+    #= Parse arguments
     set -l options h/help "c/command=" "e/env=+"
     argparse $options -- $argv || return 1
 
-    # Show help
+    #= Show help
     set -q _flag_help && __help && return 0
 
-    # Create unset options
+    #= Create unset options
     for env_var in (env)
         set key (string split = "$env_var")[1]
         if not contains "$key" $RELOAD_PROTECTED_ENV_VARS
@@ -30,10 +30,10 @@ function reload
         end
     end
 
-    # Execute command
+    #= Execute command
     set -q _flag_command && eval $_flag_command >/dev/null 2>&1
 
-    # Evaluate env
+    #= Evaluate env
     for env_var in $_flag_env
         set key (string split = "$env_var")[1]
         set value (string split = "$env_var")[2]
@@ -42,6 +42,6 @@ function reload
         set -a envs "$key=$re_evaluated"
     end
 
-    # Reload shell
+    #= Reload shell
     exec env $unset_options /usr/bin/env $envs bash -i -c "exec fish"
 end
