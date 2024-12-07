@@ -44,10 +44,16 @@ function fish-reload
 
     #= Reload shell via User's Login Shell
     switch (uname)
-        case "Darwin"
+        case Darwin
             set --local LOGIN_SHELL (dscl . -read  /Users/$USER UserShell | cut -d' ' -f2)
-        case "Linux" "FreeBSD"
-            set --local LOGIN_SHELL (awk -F: -v user="$USER" '$1 == user {print $NF}' /etc/passwd)
+        case Linux
+            set --local LOGIN_SHELL (awk -F: -v user=$USER '$1 == user {print $NF}' /etc/passwd)
+        case FreeBSD NetBSD DragonFly
+            set --local LOGIN_SHELL (awk -F: -v user=$USER '$1 == user {print $NF}' /etc/passwd)
+        case (command --search --quiet "getent")
+            set --local LOGIN_SHELL (getent passwd $USER | cut -d : -f 7)
+        case (command --search --quiet "perl")
+            set --local LOGIN_SHELL (perl -e '@x=getpwuid($<); print $x[8]')
         case "*"
             set --local LOGIN_SHELL $SHELL
     end
