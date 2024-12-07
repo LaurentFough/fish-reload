@@ -1,4 +1,11 @@
-function fish-reload
+#!/opt/homebrew/bin/fish
+
+# -*- tab-width: 2; encoding: utf-8 -*-
+
+#= file: $HOME/.config/fish/functions/fish-reload.fish
+
+
+function fish-reload --description="reload fish environment"
     #= Help
     function __help -d "show help"
         printf "usage: fish-reload [-h] [-c command] [-e 'env1=value1'] [-e 'env2=value2']\n\n"
@@ -45,17 +52,20 @@ function fish-reload
     #= Reload shell via User's Login Shell
     switch (uname)
         case Darwin
-            set --local LOGIN_SHELL (dscl . -read  /Users/$USER UserShell | cut -d' ' -f2)
+            set LOGIN_SHELL (dscl . -read  /Users/$USER UserShell | cut -d' ' -f2)
         case Linux
-            set --local LOGIN_SHELL (awk -F: -v user=$USER '$1 == user {print $NF}' /etc/passwd)
+            set LOGIN_SHELL (awk -F: -v user=$USER '$1 == user {print $NF}' /etc/passwd)
         case FreeBSD NetBSD DragonFly
-            set --local LOGIN_SHELL (awk -F: -v user=$USER '$1 == user {print $NF}' /etc/passwd)
+            set LOGIN_SHELL (awk -F: -v user=$USER '$1 == user {print $NF}' /etc/passwd)
         case (command --search --quiet "getent")
-            set --local LOGIN_SHELL (getent passwd $USER | cut -d : -f 7)
+            set LOGIN_SHELL (getent passwd $USER | cut -d : -f 7)
         case (command --search --quiet "perl")
-            set --local LOGIN_SHELL (perl -e '@x=getpwuid($<); print $x[8]')
+            set LOGIN_SHELL (perl -e '@x=getpwuid($<); print $x[8]')
         case "*"
-            set --local LOGIN_SHELL $SHELL
+            set LOGIN_SHELL $SHELL
     end
     exec env $unset_options /usr/bin/env $envs $LOGIN_SHELL -i -c "exec fish"
 end
+
+
+# vim:ft=fish
