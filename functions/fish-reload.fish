@@ -1,7 +1,7 @@
-function frc.reload
+function fish-reload
     #= Help
     function __help -d "show help"
-        printf "usage: frc.reload [-h] [-c command] [-e 'env1=value1'] [-e 'env2=value2']\n\n"
+        printf "usage: fish-reload [-h] [-c command] [-e 'env1=value1'] [-e 'env2=value2']\n\n"
 
         printf "positional arguments:\n"
         printf "\n"
@@ -42,6 +42,14 @@ function frc.reload
         set -a envs "$key=$re_evaluated"
     end
 
-    #= Reload shell
-    exec env $unset_options /usr/bin/env $envs bash -i -c "exec fish"
+    #= Reload shell via User's Login Shell
+    switch (uname)
+        case "Darwin"
+            set --local LOGIN_SHELL (dscl . -read  /Users/$USER UserShell | cut -d' ' -f2)
+        case "Linux" "FreeBSD"
+            set --local LOGIN_SHELL (awk -F: -v user="$USER" '$1 == user {print $NF}' /etc/passwd)
+        case "*"
+            set --local LOGIN_SHELL $SHELL
+    end
+    exec env $unset_options /usr/bin/env $envs $LOGIN_SHELL -i -c "exec fish"
 end
